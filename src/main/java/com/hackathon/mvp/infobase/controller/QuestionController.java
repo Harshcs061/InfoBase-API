@@ -7,8 +7,10 @@ import com.hackathon.mvp.infobase.model.Answer;
 import com.hackathon.mvp.infobase.model.Question;
 import com.hackathon.mvp.infobase.service.AnswerService;
 import com.hackathon.mvp.infobase.service.QuestionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,16 +18,22 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("api")
 public class QuestionController {
 
-    private final QuestionService questionService;
-    private final AnswerService answerService;
+    @Autowired
+    private QuestionService questionService;
 
-    public QuestionController(QuestionService questionService, AnswerService answerService) {
-        this.questionService = questionService;
-        this.answerService = answerService;
+    @Autowired
+    private AnswerService answerService;
+
+    public QuestionController(){}
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test(){
+        return new ResponseEntity<>("Everything work fine", HttpStatus.OK);
     }
+
 
     // 1) User can submit question
     @PostMapping("/questions")
