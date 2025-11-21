@@ -2,20 +2,17 @@ spring:
   mvc:
     throw-exception-if-no-handler-found: true
   web:
-      resources:
-        add-mappings: false
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+    resources:
+      add-mappings: false
 
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:postgresql://ep-green-lake-a8xxpl9c-pooler.eastus2.azure.neon.tech/neondb?sslmode=require&channel_binding=require
+    username: neondb_owner
+    password: npg_JLejgTuOpx30
+    driver-class-name: org.postgresql.Driver
 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
+    show-sql: true

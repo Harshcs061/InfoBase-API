@@ -27,7 +27,6 @@ public class QuestionController {
     @Autowired
     private AnswerService answerService;
 
-    public QuestionController(){}
 
     @GetMapping("/test")
     public ResponseEntity<String> test(){
