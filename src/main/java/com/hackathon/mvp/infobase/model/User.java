@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
-import java.time.Instant;
+
 import java.util.UUID;
 
 @Entity
@@ -24,7 +24,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    private String displayName;
+    private String name;
 
-    private Instant createdAt;
+    private String avatar;
 }

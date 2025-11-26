@@ -1,10 +1,12 @@
 package com.hackathon.mvp.infobase.model;
 
+import com.hackathon.mvp.infobase.enums.QuestionVisibility;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
-import java.util.UUID;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "questions")
@@ -14,19 +16,34 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class Question {
-    @Id
-    @Column(columnDefinition = "uuid")
-    private UUID id;
 
-    @Column(columnDefinition = "text", nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String title;
 
-    @Column(columnDefinition = "text")
-    private String body;
+    @Column(length = 5000)
+    private String description;
+
+    @ManyToMany
+    @JoinTable(
+            name = "question_tags",
+            joinColumns = @JoinColumn(name = "question_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id")
-    private User author;
+    @JoinColumn(name = "asked_by_id")
+    private User askedBy;
 
-    private Instant createdAt;
+    @Enumerated(EnumType.STRING)
+    private QuestionVisibility visibility;
+
+    private int votes;
+    private int answersCount;
+    private int views;
+
+    private OffsetDateTime createdAt;
 }
