@@ -14,7 +14,7 @@ public class QuestionMapper {
         return AuthorDto.builder()
                 .id(user.getId() != null ? user.getId().toString() : null)
                 .name(user.getName())
-                .avatar(user.getAvatar())
+                .avatar(user.getEmail())
                 .build();
     }
 
@@ -44,9 +44,9 @@ public class QuestionMapper {
         String name = user.getName();
 
         return AskedByDto.builder()
-                .id(user.getId() != null ? user.getId().toString() : null)
+                .id(user.getId())
                 .name(user.getName())
-                .avatar(user.getAvatar())
+                .avatar(user.getEmail())
                 .build();
     }
 

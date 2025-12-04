@@ -1,11 +1,12 @@
 package com.hackathon.mvp.infobase.model;
 
+import com.hackathon.mvp.infobase.enums.ContentType;
+import com.hackathon.mvp.infobase.enums.Mentionable;
 import com.hackathon.mvp.infobase.enums.QuestionVisibility;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.OffsetDateTime;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -15,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Question {
+public class Question implements Mentionable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,8 +43,25 @@ public class Question {
     private QuestionVisibility visibility;
 
     private int votes;
+
     private int answersCount;
+
     private int views;
 
-    private OffsetDateTime createdAt;
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    @Override
+    public String getContent() {
+        return description;
+    }
+
+    @Override
+    public ContentType getContentType() {
+        return ContentType.QUESTION;
+    }
 }

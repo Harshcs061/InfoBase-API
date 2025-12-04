@@ -3,6 +3,7 @@ package com.hackathon.mvp.infobase.dto;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -15,5 +16,5 @@ public class QuestionDetailDto {
     private List<String> tags;
     private AskedByDto askedBy;
     private QuestionStatsDto stats;
-    private OffsetDateTime createdAt;
+    private LocalDateTime createdAt;
 }

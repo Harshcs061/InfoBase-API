@@ -14,5 +14,5 @@ public class CreateQuestionRequestDto {
     private String description;    // required
     private List<String> tags;     // optional, max 5
     private String visibility;     // optional: "public" or "organization"
-    private UUID askedBy;
+    private Long askedBy;
 }
