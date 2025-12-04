@@ -1,9 +1,10 @@
 package com.hackathon.mvp.infobase.model;
 
+import com.hackathon.mvp.infobase.enums.ContentType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -13,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Answer {
+public class Answer  {
     @Id
     @Column(columnDefinition = "uuid")
     private UUID id;
@@ -29,5 +30,18 @@ public class Answer {
     @JoinColumn(name = "author_id")
     private User author;
 
-    private Instant createdAt;
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
+    public String getContent() {
+        return body;
+    }
+
+    public ContentType getContentType() {
+        return ContentType.ANSWER;
+    }
 }

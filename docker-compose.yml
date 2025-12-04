@@ -1,0 +1,36 @@
+#version: "3.8"
+#
+#services:
+#  db:
+#    image: postgres:16
+#    container_name: infobase-postgres
+#    environment:
+#      POSTGRES_DB: infobase_db
+#      POSTGRES_USER: infobase_user
+#      POSTGRES_PASSWORD: infobase_password
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - infobase-postgres-data:/var/lib/postgresql/data
+#    restart: unless-stopped
+#
+#  app:
+#    build: .
+#    container_name: infobase-service
+#    depends_on:
+#      - db
+#    environment:
+#      # These override spring.datasource.* if you want; they also match defaults in application.yml
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/infobase_db
+#      SPRING_DATASOURCE_USERNAME: infobase_user
+#      SPRING_DATASOURCE_PASSWORD: infobase_password
+#
+#      # Optional: JPA config via env var instead of yml
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#
+#    ports:
+#      - "8080:8080"
+#    restart: unless-stopped
+#
+#volumes:
+#  infobase-postgres-data:

@@ -1,0 +1,37 @@
+package com.hackathon.mvp.infobase.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "notifications")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Notification {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "mention_id", nullable = false)
+    private Mention mention;
+
+    private boolean isRead;
+
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        isRead = false;
+    }
+}

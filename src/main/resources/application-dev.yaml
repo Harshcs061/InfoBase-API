@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    # Default URL works when running inside docker-compose (db service)
+#    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://db:5432/infobase_db}
+#    username: ${SPRING_DATASOURCE_USERNAME:infobase_user}
+#    password: ${SPRING_DATASOURCE_PASSWORD:infobase_password}
+
+    url: jdbc:postgresql://ep-green-lake-a8xxpl9c-pooler.eastus2.azure.neon.tech/neondb?sslmode=require&channel_binding=require
+    username: neondb_owner
+    password: npg_JLejgTuOpx30
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
+
+
+  sql:
+    init:
+      mode: always
+
+server:
+  port: 8080
+
+
+jwt:
+  secret:89dfd8c7d401b9c5c21027b3ad0f7821
+  expiration=86400000
+
+app.cors.allowed-origins:
+  - "http://localhost:3000"
+  - "http://localhost:4200"
+  - "http://127.0.0.1:5500"
+  - "http://localhost:5173"

@@ -1,13 +1,9 @@
 package com.hackathon.mvp.infobase.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -18,13 +14,21 @@ import java.util.UUID;
 @Builder
 public class User {
     @Id
-    @Column(columnDefinition = "uuid")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(nullable = false, unique = true)
+    private String name;
+
+    @Column(unique = true, nullable = false)
     private String email;
 
-    private String displayName;
+    @Column(nullable = false)
+    private String password;
 
-    private Instant createdAt;
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

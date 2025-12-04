@@ -1,9 +1,9 @@
 package com.hackathon.mvp.infobase.respository;
 
-import com.hackathon.mvp.infobase.model.Answer;
+import com.hackathon.mvp.infobase.model.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AnswerRepository extends JpaRepository<Answer, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
 }
