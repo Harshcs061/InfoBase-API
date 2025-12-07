@@ -1,5 +1,6 @@
 package com.hackathon.mvp.infobase.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hackathon.mvp.infobase.enums.ContentType;
 import com.hackathon.mvp.infobase.enums.Mentionable;
 import com.hackathon.mvp.infobase.enums.QuestionVisibility;
@@ -41,6 +42,10 @@ public class Question implements Mentionable {
 
     @Enumerated(EnumType.STRING)
     private QuestionVisibility visibility;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    private Project project;
 
     private int votes;
 

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 public class AnswerService {
@@ -30,25 +32,25 @@ public class AnswerService {
 
     @Transactional
     public Answer createAnswer(Long userId, Long questionId, String content) {
-        User user = userRepository.findById(userId);
+        Optional<User> user = userRepository.findById(userId);
 
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new IllegalArgumentException("Question not found"));
 
 
         Answer answer = new Answer();
-        answer.setAuthor(user);
+        answer.setAuthor(user.get());
         answer.setQuestion(question);
         answer.setBody(content);
         Answer saved = answerRepository.save(answer);
 
-        // Process @mentions in answer content
-        mentionService.processMentions(
-                ContentType.ANSWER,
-                userId,
-                content,
-                user
-        );
+//        // Process @mentions in answer content
+//        mentionService.processMentions(
+//                ContentType.ANSWER,
+//                userId,
+//                content,
+//                user
+//        );
 
         log.info("Answer created: ID {} with mentions", saved.getId());
         return saved;

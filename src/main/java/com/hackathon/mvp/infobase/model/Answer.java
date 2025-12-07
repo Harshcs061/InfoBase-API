@@ -32,13 +32,13 @@ public class Answer  {
 
     private LocalDateTime createdAt;
 
-    @Column(columnDefinition = "votes")
+    @Column(name = "votes")
     private int votes;
 
-    @Column(columnDefinition = "upvote")
+    @Column(name = "upvote")
     private int upvote;
 
-    @Column(columnDefinition = "downvote")
+    @Column(name = "downvote")
     private int downvote;
 
     @PrePersist

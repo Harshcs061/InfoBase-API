@@ -48,7 +48,7 @@ public class QuestionMapper {
         return AskedByDto.builder()
                 .id(user.getId())
                 .name(user.getName())
-                .avatar(user.getEmail())
+                .email(user.getEmail())
                 .build();
     }
 
@@ -66,7 +66,7 @@ public class QuestionMapper {
         return QuestionDetailDto.builder()
                 .id(q.getId().toString())
                 .title(q.getTitle())
-                .body(q.getDescription())   // maps to "body"
+                .description(q.getDescription())   // maps to "body"
                 .tags(
                         q.getTags() == null
                                 ? List.of()
@@ -76,7 +76,10 @@ public class QuestionMapper {
                                 .toList()
                 )
                 .askedBy(toAskedByDto(q.getAskedBy()))
-                .stats(toStatsDto(q))
+                .views(q.getViews())
+                .answer_count(q.getAnswersCount())
+                .votes(q.getVotes())
+                .related_project(q.getProject().getName())
                 .createdAt(q.getCreatedAt())
                 .build();
     }
@@ -95,8 +98,9 @@ public class QuestionMapper {
                                 .toList()
                 )
                 .visibility(q.getVisibility().name().toLowerCase())
-                .askedBy(toAuthorDto(q.getAskedBy()))
+                .askedBy(UserMapper.toDto(q.getAskedBy()))
                 .createdAt(q.getCreatedAt())
+                .relatedProject(q.getProject().getName())
                 .build();
     }
 }

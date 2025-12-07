@@ -11,5 +11,5 @@ public class QuestionListResponseDto {
     private long total;
     private int page;
     private int limit;
-    private List<QuestionListItemDto> questions;
+    private List<QuestionDetailDto> questions;
 }

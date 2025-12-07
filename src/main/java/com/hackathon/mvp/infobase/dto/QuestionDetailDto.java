@@ -12,9 +12,12 @@ import java.util.List;
 public class QuestionDetailDto {
     private String id;
     private String title;
-    private String body;   // maps from entity.description
+    private String description;   // maps from entity.description
     private List<String> tags;
     private AskedByDto askedBy;
-    private QuestionStatsDto stats;
+    private int votes;
+    private int answer_count;
+    private int views;
+    private String related_project;
     private LocalDateTime createdAt;
 }

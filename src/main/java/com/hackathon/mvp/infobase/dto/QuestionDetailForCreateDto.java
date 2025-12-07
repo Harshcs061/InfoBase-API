@@ -10,12 +10,12 @@ import java.util.List;
 @Getter
 @Builder
 public class QuestionDetailForCreateDto {
-
     private Long id;
     private String title;
     private String description;
     private List<String> tags;
     private String visibility;
-    private AuthorDto askedBy;
+    private UserDto askedBy;
+    private String relatedProject;
     private LocalDateTime createdAt;
 }

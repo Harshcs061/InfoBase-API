@@ -1,79 +1,9 @@
----- ======================================================
-----  USERS (UUID PRIMARY KEY)
----- ======================================================
---INSERT INTO users (id, name, avatar, email) VALUES
---('11111111-1111-1111-1111-111111111111', 'Sarah Chen',  'https://cdn.example.com/avatars/1.png', 'sarah.chen@example.com'),
---('22222222-2222-2222-2222-222222222222', 'David Park',   'https://cdn.example.com/avatars/2.png', 'david.park@example.com'),
---('33333333-3333-3333-3333-333333333333', 'John Mathews', 'https://cdn.example.com/avatars/3.png', 'john.mathews@example.com'),
---('44444444-4444-4444-4444-444444444444', 'Emily Johnson','https://cdn.example.com/avatars/4.png', 'emily.johnson@example.com'),
---('55555555-5555-5555-5555-555555555555', 'Akash Verma',  'https://cdn.example.com/avatars/5.png', 'akash.verma@example.com');
---
----- ======================================================
-----  TAGS (NUMERIC ID)
----- ======================================================
---INSERT INTO tags (id, name) VALUES
---(1, 'React'),
---(2, 'Authentication'),
---(3, 'JWT'),
---(4, 'Security'),
---(5, 'State Management'),
---(6, 'Redux'),
---(7, 'Architecture'),
---(8, 'Java'),
---(9, 'Spring Boot'),
---(10, 'Performance'),
---(11, 'Optimization'),
---(12, 'Docker'),
---(13, 'Containers'),
---(14, 'DevOps'),
---(15, 'Kafka'),
---(16, 'RabbitMQ'),
---(17, 'Message Queue'),
---(18, 'Microservices');
---
----- ======================================================
-----  QUESTIONS (NUMERIC ID, asked_by_id = USER UUID)
----- ======================================================
---INSERT INTO questions
---(id, title, description, asked_by_id, visibility, votes, answers_count, views, created_at) VALUES
---(101, 'How to implement authentication in React with JWT?',
--- 'I am building a React app, what is the best way to secure JWT tokens?',
--- '11111111-1111-1111-1111-111111111111', 'PUBLIC', 42, 8, 150, '2025-01-10T12:00:00Z'),
---
---(102, 'Best practices for state management in large React apps?',
--- 'Should I choose Redux Toolkit or Context API for large production apps?',
--- '22222222-2222-2222-2222-222222222222', 'PUBLIC', 20, 5, 45, '2025-01-19T10:00:00Z'),
---
---(103, 'How to optimize Spring Boot REST API performance?',
--- 'I need to handle 10k requests per second, what caching or async techniques?',
--- '33333333-3333-3333-3333-333333333333', 'ORGANIZATION', 35, 6, 200, '2025-01-18T09:30:00Z'),
---
---(104, 'Difference between Docker volumes and bind mounts?',
--- 'When should I use volumes vs local bind mounts for real applications?',
--- '44444444-4444-4444-4444-444444444444', 'PUBLIC', 12, 3, 25, '2025-01-21T08:00:00Z'),
---
---(105, 'Is Kafka suitable for small microservices?',
--- 'Do small projects really benefit from Kafka or should we choose RabbitMQ?',
--- '55555555-5555-5555-5555-555555555555', 'ORGANIZATION', 18, 4, 80, '2025-01-22T14:15:00Z');
---
----- ======================================================
-----  QUESTION_TAGS (JOIN TABLE: question_id BIGINT, tag_id BIGINT)
----- ======================================================
---INSERT INTO question_tags (question_id, tag_id) VALUES
----- Q101 tags
---(101, 1), (101, 2), (101, 3), (101, 4),
---
----- Q102 tags
---(102, 1), (102, 5), (102, 6), (102, 7),
--
----- Q103 tags
---(103, 8), (103, 9), (103, 10), (103, 11),
---
----- Q104 tags
---(104, 12), (104, 13), (104, 14),
---
----- Q105 tags
---(105, 15), (105, 16), (105, 17), (105, 18);
-
---CREATE INDEX IF NOT EXISTS idx_tags_name_lower ON tags (LOWER(name));
-
+INSERT INTO users (name, email, password)
+VALUES
+('Aarav Sharma', 'aarav.sharma@example.com', '$2a$12$A.wopHyRHSriaU.HAzeXEeSOYxM6C3cOfU1dqexPOOeUXCnQ4q.Vm'),
+('Priya Nair', 'priya.nair@example.com', '$2a$12$A.wopHyRHSriaU.HAzeXEeSOYxM6C3cOfU1dqexPOOeUXCnQ4q.Vm'),
+('Rohit Verma', 'rohit.verma@example.com', '$2a$12$A.wopHyRHSriaU.HAzeXEeSOYxM6C3cOfU1dqexPOOeUXCnQ4q.Vm'),
+('Sneha Patil', 'sneha.patil@example.com', '$2a$12$A.wopHyRHSriaU.HAzeXEeSOYxM6C3cOfU1dqexPOOeUXCnQ4q.Vm'),
+('Aditya Rao', 'aditya.rao@example.com', '$2a$12$BWAo0EPUUHqFbDBZl4BsGO62XraDi19SRzWrJ1EyttQNdCaKWPznK'),
+('Meera Iyer', 'meera.iyer@example.com', '$2a$12$BWAo0EPUUHqFbDBZl4BsGO62XraDi19SRzWrJ1EyttQNdCaKWPznK'),
+('Karan Singh', 'karan.singh@example.com', '$2a$12$BWAo0EPUUHqFbDBZl4BsGO62XraDi19SRzWrJ1EyttQNdCaKWPznK');

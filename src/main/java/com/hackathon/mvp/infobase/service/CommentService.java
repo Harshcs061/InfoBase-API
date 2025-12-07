@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 public class CommentService {
@@ -25,19 +27,19 @@ public class CommentService {
 
     @Transactional
     public Comment createComment(Long userId, String content) {
-        User user = userRepository.findById(userId);
+        Optional<User> user = userRepository.findById(userId);
 
         Comment comment = new Comment();
-        comment.setUser(user);
+        comment.setUser(user.get());
         comment.setContent(content);
         Comment saved = commentRepository.save(comment);
 
-        mentionService.processMentions(
-                ContentType.COMMENT,
-                saved.getId(),
-                content,
-                user
-        );
+//        mentionService.processMentions(
+//                ContentType.COMMENT,
+//                saved.getId(),
+//                content,
+//                user
+//        );
 
         log.info("Comment created: ID {} with mentions", saved.getId());
         return saved;

@@ -1,6 +1,7 @@
 package com.hackathon.mvp.infobase.controller;
 
 import com.hackathon.mvp.infobase.dto.*;
+import com.hackathon.mvp.infobase.model.Question;
 import com.hackathon.mvp.infobase.service.QuestionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -46,10 +47,10 @@ public class QuestionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // 4. Update Existing Question
-    @PutMapping("/{id}")
-    public ResponseEntity<QuestionDetailDto> updateQuestion(@RequestBody UpdateQuestionRequestDto request) {
-        QuestionDetailDto response = questionService.updateQuestion(request);
-        return ResponseEntity.ok(response);
-    }
+//    // 4. Update Existing Question
+//    @PutMapping("/{id}")
+//    public ResponseEntity<QuestionDetailDto> updateQuestion(@RequestBody UpdateQuestionRequestDto request) {
+//        QuestionDetailDto response = questionService.updateQuestion(request);
+//        return ResponseEntity.ok(response);
+//    }
 }

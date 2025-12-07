@@ -3,9 +3,11 @@ package com.hackathon.mvp.infobase.serviceImpl;
 import com.hackathon.mvp.infobase.dto.*;
 import com.hackathon.mvp.infobase.enums.QuestionVisibility;
 import com.hackathon.mvp.infobase.mapper.QuestionMapper;
+import com.hackathon.mvp.infobase.model.Project;
 import com.hackathon.mvp.infobase.model.Question;
 import com.hackathon.mvp.infobase.model.Tag;
 import com.hackathon.mvp.infobase.model.User;
+import com.hackathon.mvp.infobase.respository.ProjectRepository;
 import com.hackathon.mvp.infobase.respository.QuestionRepository;
 import com.hackathon.mvp.infobase.respository.TagRepository;
 import com.hackathon.mvp.infobase.respository.UserRepository;
@@ -17,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,16 +35,19 @@ public class QuestionServiceImpl implements QuestionService {
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
+    private final ProjectRepository projectRepository;
 
     @Autowired
     private MentionService mentionService;
 
     public QuestionServiceImpl(QuestionRepository questionRepository,
                                UserRepository userRepository,
-                               TagRepository tagRepository) {
+                               TagRepository tagRepository,
+                               ProjectRepository projectRepository) {
         this.questionRepository = questionRepository;
         this.userRepository = userRepository;
         this.tagRepository = tagRepository;
+        this.projectRepository = projectRepository;
     }
 
     @Override
@@ -64,10 +68,10 @@ public class QuestionServiceImpl implements QuestionService {
             questionPage = questionRepository.findAll(pageable);
         }
 
-        List<QuestionListItemDto> items = questionPage
+        List<QuestionDetailDto> items = questionPage
                 .getContent()
                 .stream()
-                .map(QuestionMapper::toListItemDto)
+                .map(QuestionMapper::toDetailDto)
                 .toList();
 
         return QuestionListResponseDto.builder()
@@ -117,16 +121,25 @@ public class QuestionServiceImpl implements QuestionService {
 
         QuestionVisibility visibility = QuestionVisibility.PUBLIC;
         if (request.getVisibility() != null && !request.getVisibility().isBlank()) {
-            if ("organization".equalsIgnoreCase(request.getVisibility())) {
-                visibility = QuestionVisibility.ORGANIZATION;
-            } else {
+            if ("TEAM".equalsIgnoreCase(request.getVisibility())) {
+                visibility = QuestionVisibility.TEAM;
+            } else if("PUBLIC".equalsIgnoreCase(request.getVisibility())) {
                 visibility = QuestionVisibility.PUBLIC;
+            }else{
+                visibility = QuestionVisibility.CONFIDENTIAL;
             }
         }
+        
 
-        User askedBy = userRepository.findById(request.getAskedBy());
+        User askedBy = userRepository.findById(request.getAskedBy())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "User not found with id: " + request.getAskedBy()
+                ));
+
 
         Set<Tag> tags = resolveTags(request.getTags());
+        Project project = projectRepository.findById(request.getRelated_project())
+                .orElseThrow(() -> new IllegalArgumentException("Project Id is invalid"));
 
         Question question = Question.builder()
                 .title(request.getTitle())
@@ -138,11 +151,10 @@ public class QuestionServiceImpl implements QuestionService {
                 .answersCount(0)
                 .views(0)
                 .createdAt(LocalDateTime.now())
+                .project(project)
                 .build();
 
         Question saved = questionRepository.save(question);
-
-        User user = userRepository.findById(request.getAskedBy());
 
         return CreateQuestionResponseDto.builder()
                 .success(true)
@@ -151,78 +163,69 @@ public class QuestionServiceImpl implements QuestionService {
                 .build();
 
     }
+//
+//    @Override
+//    public QuestionDetailDto updateQuestion(UpdateQuestionRequestDto request) {
+//        if (request.getId() == null) {
+//            throw new IllegalArgumentException("Question id is required for update");
+//        }
+//
+//        Question question = questionRepository.findById(request.getId())
+//                .orElseThrow(() -> new EntityNotFoundException("Question not found with id: " + request.getId()));
+//
+//        boolean changed = false;
+//
+//        // 2. Update title only if provided (non-null & non-blank)
+//        if (request.getTitle() != null) {
+//            String newTitle = request.getTitle().trim();
+//            if (!newTitle.isBlank() && !newTitle.equals(question.getTitle())) {
+//                question.setTitle(newTitle);
+//                changed = true;
+//            }
+//        }
+//
+//        if (request.getDescription() != null) {
+//            String newDescription = request.getDescription().trim();
+//            if (!newDescription.isBlank() && !newDescription.equals(question.getDescription())) {
+//                question.setDescription(newDescription);
+//                changed = true;
+//            }
+//        }
+//
+//
+//        if (request.getVisibility() != null && !request.getVisibility().isBlank()) {
+//            QuestionVisibility newVisibility;
+//            if (request.getVisibility().equalsIgnoreCase("organization")) {
+//                newVisibility = QuestionVisibility.;
+//            } else {
+//                newVisibility = QuestionVisibility.PUBLIC;
+//            }
+//
+//            if (question.getVisibility() != newVisibility) {
+//                question.setVisibility(newVisibility);
+//                changed = true;
+//            }
+//        }
+//
+//
+//        if (changed) {
+//            question = questionRepository.save(question);
+//        }
+//
+//        QuestionDetailDto dto = QuestionMapper.toDetailDto(question);
+//        return dto;
+//    }
 
-    @Override
-    public QuestionDetailDto updateQuestion(UpdateQuestionRequestDto request) {
-        if (request.getId() == null) {
-            throw new IllegalArgumentException("Question id is required for update");
-        }
 
-        Question question = questionRepository.findById(request.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Question not found with id: " + request.getId()));
-
-        boolean changed = false;
-
-        // 2. Update title only if provided (non-null & non-blank)
-        if (request.getTitle() != null) {
-            String newTitle = request.getTitle().trim();
-            if (!newTitle.isBlank() && !newTitle.equals(question.getTitle())) {
-                question.setTitle(newTitle);
-                changed = true;
-            }
-        }
-
-        if (request.getDescription() != null) {
-            String newDescription = request.getDescription().trim();
-            if (!newDescription.isBlank() && !newDescription.equals(question.getDescription())) {
-                question.setDescription(newDescription);
-                changed = true;
-            }
-        }
-
-
-        if (request.getVisibility() != null && !request.getVisibility().isBlank()) {
-            QuestionVisibility newVisibility;
-            if (request.getVisibility().equalsIgnoreCase("organization")) {
-                newVisibility = QuestionVisibility.ORGANIZATION;
-            } else {
-                newVisibility = QuestionVisibility.PUBLIC;
-            }
-
-            if (question.getVisibility() != newVisibility) {
-                question.setVisibility(newVisibility);
-                changed = true;
-            }
-        }
-
-
-        if (changed) {
-            question = questionRepository.save(question);
-        }
-
-        QuestionDetailDto dto = QuestionMapper.toDetailDto(question);
-        return dto;
-    }
-
-
-    private Set<Tag> resolveTags(List<String> tagNames) {
-        if (tagNames == null || tagNames.isEmpty()) {
+    private Set<Tag> resolveTags(List<Long> tagIds) {
+        if (tagIds == null || tagIds.isEmpty()) {
             return Set.of();
         }
 
         Set<Tag> result = new HashSet<>();
 
-        for (String name : tagNames) {
-            if (name == null || name.isBlank()) continue;
-
-            String trimmed = name.trim();
-
-            Tag tag = tagRepository.findByNameIgnoreCase(trimmed)
-                    .orElseGet(() -> tagRepository.save(
-                            Tag.builder().name(trimmed).build()
-                    ));
-
-            result.add(tag);
+        for (Long id : tagIds) {
+            tagRepository.findById(id).ifPresent(result::add);
         }
 
         return result;
