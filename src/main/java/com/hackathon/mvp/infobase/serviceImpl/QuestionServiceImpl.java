@@ -1,7 +1,6 @@
 package com.hackathon.mvp.infobase.serviceImpl;
 
 import com.hackathon.mvp.infobase.dto.*;
-import com.hackathon.mvp.infobase.enums.ContentType;
 import com.hackathon.mvp.infobase.enums.QuestionVisibility;
 import com.hackathon.mvp.infobase.mapper.QuestionMapper;
 import com.hackathon.mvp.infobase.model.Question;
@@ -18,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,10 +100,6 @@ public class QuestionServiceImpl implements QuestionService {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Question not found with id: " + id));
 
-        // Increase views when fetched (optional)
-        question.setViews(question.getViews() + 1);
-        // Because of @Transactional, changes will be flushed automatically.
-
         return QuestionMapper.toDetailDto(question);
     }
 
@@ -148,20 +144,64 @@ public class QuestionServiceImpl implements QuestionService {
 
         User user = userRepository.findById(request.getAskedBy());
 
-
-        mentionService.processMentions(
-                ContentType.QUESTION,
-                saved.getId(),
-                request.getDescription(),
-                user
-        );
-
         return CreateQuestionResponseDto.builder()
                 .success(true)
                 .message("Question created successfully")
                 .question(QuestionMapper.toDetailForCreateDto(saved))
                 .build();
 
+    }
+
+    @Override
+    public QuestionDetailDto updateQuestion(UpdateQuestionRequestDto request) {
+        if (request.getId() == null) {
+            throw new IllegalArgumentException("Question id is required for update");
+        }
+
+        Question question = questionRepository.findById(request.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Question not found with id: " + request.getId()));
+
+        boolean changed = false;
+
+        // 2. Update title only if provided (non-null & non-blank)
+        if (request.getTitle() != null) {
+            String newTitle = request.getTitle().trim();
+            if (!newTitle.isBlank() && !newTitle.equals(question.getTitle())) {
+                question.setTitle(newTitle);
+                changed = true;
+            }
+        }
+
+        if (request.getDescription() != null) {
+            String newDescription = request.getDescription().trim();
+            if (!newDescription.isBlank() && !newDescription.equals(question.getDescription())) {
+                question.setDescription(newDescription);
+                changed = true;
+            }
+        }
+
+
+        if (request.getVisibility() != null && !request.getVisibility().isBlank()) {
+            QuestionVisibility newVisibility;
+            if (request.getVisibility().equalsIgnoreCase("organization")) {
+                newVisibility = QuestionVisibility.ORGANIZATION;
+            } else {
+                newVisibility = QuestionVisibility.PUBLIC;
+            }
+
+            if (question.getVisibility() != newVisibility) {
+                question.setVisibility(newVisibility);
+                changed = true;
+            }
+        }
+
+
+        if (changed) {
+            question = questionRepository.save(question);
+        }
+
+        QuestionDetailDto dto = QuestionMapper.toDetailDto(question);
+        return dto;
     }
 
 

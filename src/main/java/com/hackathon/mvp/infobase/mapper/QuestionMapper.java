@@ -19,6 +19,8 @@ public class QuestionMapper {
     }
 
     public static QuestionListItemDto toListItemDto(Question q) {
+        int votes = q.getUpvote()- q.getDownvote();
+        votes = votes > 0 ?votes:0;
         return QuestionListItemDto.builder()
                 .id(q.getId().toString())
                 .title(q.getTitle())
@@ -32,7 +34,7 @@ public class QuestionMapper {
                                 .toList()
                 )
                 .author(toAuthorDto(q.getAskedBy()))
-                .votes(q.getVotes())
+                .votes(votes)
                 .answersCount(q.getAnswersCount())
                 .createdAt(q.getCreatedAt())
                 .build();
@@ -51,8 +53,10 @@ public class QuestionMapper {
     }
 
     public static QuestionStatsDto toStatsDto(Question q) {
+        int votes = q.getUpvote()- q.getDownvote();
+        votes = votes > 0 ?votes:0;
         return QuestionStatsDto.builder()
-                .votes(q.getVotes())
+                .votes(votes)
                 .answers(q.getAnswersCount())
                 .views(q.getViews())
                 .build();

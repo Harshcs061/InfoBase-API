@@ -17,7 +17,7 @@ import java.util.UUID;
 public class Answer  {
     @Id
     @Column(columnDefinition = "uuid")
-    private UUID id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
@@ -31,6 +31,15 @@ public class Answer  {
     private User author;
 
     private LocalDateTime createdAt;
+
+    @Column(columnDefinition = "votes")
+    private int votes;
+
+    @Column(columnDefinition = "upvote")
+    private int upvote;
+
+    @Column(columnDefinition = "downvote")
+    private int downvote;
 
     @PrePersist
     protected void onCreate() {

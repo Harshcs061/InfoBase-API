@@ -48,6 +48,10 @@ public class Question implements Mentionable {
 
     private int views;
 
+    private int upvote;
+
+    private int downvote;
+
     private LocalDateTime createdAt;
 
     @PrePersist
