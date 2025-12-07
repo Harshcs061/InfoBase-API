@@ -23,7 +23,7 @@ public class VoteController {
             throw new IllegalArgumentException("Action cannot be empty");
         }
 
-        String normalizedAction = request.getAction().trim().toLowerCase();
+        //String normalizedAction = request.getAction().trim().toLowerCase();
 
         boolean result = voteService.voteQuestion(request.getUserId(),request.getVotingId(), request.getAction());
 

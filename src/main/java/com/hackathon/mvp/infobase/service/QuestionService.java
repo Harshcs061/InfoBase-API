@@ -13,5 +13,5 @@ public interface QuestionService {
 
     CreateQuestionResponseDto createQuestion(CreateQuestionRequestDto request) throws IllegalArgumentException;
 
-    QuestionDetailDto updateQuestion(UpdateQuestionRequestDto request);
+//    QuestionDetailDto updateQuestion(UpdateQuestionRequestDto request);
 }

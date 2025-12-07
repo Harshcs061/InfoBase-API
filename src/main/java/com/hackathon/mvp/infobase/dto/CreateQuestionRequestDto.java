@@ -9,10 +9,10 @@ import java.util.UUID;
 @Getter
 @Setter
 public class CreateQuestionRequestDto {
-
-    private String title;          // required
-    private String description;    // required
-    private List<String> tags;     // optional, max 5
-    private String visibility;     // optional: "public" or "organization"
+    private String title;
+    private String description;
+    private List<Long> tags;
+    private String visibility;
     private Long askedBy;
+    private Long related_project;
 }

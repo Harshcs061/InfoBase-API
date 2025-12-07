@@ -41,8 +41,8 @@ public class VoteServiceImpl implements VoteService {
         Question ques = questionRepository.findById(votingId)
                 .orElseThrow(() -> new IllegalArgumentException("Question not found"));
 
-        int up = Math.max(0, ques.getUpvote() <= 0 ? 0 : ques.getUpvote());
-        int down = Math.max(0, ques.getDownvote() <= 0 ? 0 : ques.getDownvote());
+        int up = ques.getUpvote();
+        int down = ques.getDownvote();
 
         Vote existingVote = voteRepository.findVoteForQuestion(userId, votingId);
         VoteType newType = action.equals("upvote") ? VoteType.UPVOTE : VoteType.DOWNVOTE;
@@ -57,9 +57,9 @@ public class VoteServiceImpl implements VoteService {
 
             // remove effect of previous vote
             if (previous == VoteType.UPVOTE) {
-                up = Math.max(0, up - 1);
+                up = up - 1;
             } else if (previous == VoteType.DOWNVOTE) {
-                down = Math.max(0, down - 1);
+                down =  down - 1;
             }
 
             // apply new vote
@@ -112,8 +112,8 @@ public class VoteServiceImpl implements VoteService {
         Answer ans = answerRepository.findById(votingId)
                 .orElseThrow(() -> new IllegalArgumentException("Answer not found"));
 
-        int up = Math.max(0, ans.getUpvote() <= 0 ? 0 : ans.getUpvote());
-        int down = Math.max(0, ans.getDownvote() <= 0 ? 0 : ans.getDownvote());
+        int up = ans.getUpvote();
+        int down = ans.getDownvote();
 
         // ⚠️ assuming you have this method in repo; if not, create it
         Vote existingVote = voteRepository.findVoteForAnswer(userId, votingId);
@@ -129,9 +129,9 @@ public class VoteServiceImpl implements VoteService {
 
             // remove effect of previous vote
             if (previous == VoteType.UPVOTE) {
-                up = Math.max(0, up - 1);
+                up =  up - 1;
             } else if (previous == VoteType.DOWNVOTE) {
-                down = Math.max(0, down - 1);
+                down = down - 1;
             }
 
             // apply new vote

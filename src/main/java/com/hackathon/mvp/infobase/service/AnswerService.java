@@ -19,8 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -39,45 +38,9 @@ public class AnswerService {
     @Autowired
     private MentionService mentionService;
 
-    /**
-     * 2.1 Get Answers for Question
-     */
-    @Transactional(readOnly = true)
-    public AnswerListResponseDto getAnswersForQuestion(Long questionId, String sortBy, int page, int limit) {
-        // Validate question exists
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new EntityNotFoundException("Question not found with id: " + questionId));
-
-        int safePage = Math.max(page, 1);
-        int safeLimit = Math.max(limit, 1);
-
-        Sort sort = buildSort(sortBy);
-        Pageable pageable = PageRequest.of(safePage - 1, safeLimit, sort);
-
-        Page<Answer> answerPage = answerRepository.findByQuestionId(questionId, pageable);
-
-        List<AnswerDto> answerDtos = answerPage.getContent()
-                .stream()
-                .map(AnswerMapper::toDto)
-                .collect(Collectors.toList());
-
-        AnswerListResponseDto.PaginationDto pagination = AnswerListResponseDto.PaginationDto.builder()
-                .currentPage(safePage)
-                .totalPages(answerPage.getTotalPages())
-                .totalAnswers(answerPage.getTotalElements())
-                .build();
-
-        AnswerListResponseDto.AnswerDataDto data = AnswerListResponseDto.AnswerDataDto.builder()
-                .questionId(questionId)
-                .answers(answerDtos)
-                .pagination(pagination)
-                .build();
-
-        return AnswerListResponseDto.builder()
-                .success(true)
-                .data(data)
-                .build();
-    }
+    @Transactional
+    public Answer createAnswer(Long userId, Long questionId, String content) {
+        Optional<User> user = userRepository.findById(userId);
 
     /**
      * 2.2 Get Answer by ID
@@ -117,19 +80,19 @@ public class AnswerService {
                 .votes(0)
                 .build();
 
-        Answer savedAnswer = answerRepository.save(answer);
+        Answer answer = new Answer();
+        answer.setAuthor(user.get());
+        answer.setQuestion(question);
+        answer.setBody(content);
+        Answer saved = answerRepository.save(answer);
 
-        // Increment answer count on question
-        question.setAnswersCount(question.getAnswersCount() + 1);
-        questionRepository.save(question);
-
-        // Process @mentions in answer content
-        mentionService.processMentions(
-                ContentType.ANSWER,
-                savedAnswer.getId(),
-                request.getBody(),
-                user
-        );
+//        // Process @mentions in answer content
+//        mentionService.processMentions(
+//                ContentType.ANSWER,
+//                userId,
+//                content,
+//                user
+//        );
 
         log.info("Answer created: ID {} for question {} by user {}", 
                 savedAnswer.getId(), questionId, user.getEmail());

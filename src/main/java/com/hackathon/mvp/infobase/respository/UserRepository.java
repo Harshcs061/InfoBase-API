@@ -9,11 +9,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     //List<User> findByUsernameContainingIgnoreCase(String username);
 
-    User findById(Long askedBy);
+  //  User findById(Long askedBy);
 
    // Long getReferenceById(Long userId);
 

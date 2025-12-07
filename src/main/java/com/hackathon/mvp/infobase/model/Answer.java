@@ -31,8 +31,6 @@ public class Answer {
 
     private LocalDateTime createdAt;
 
-    private LocalDateTime updatedAt;
-
     @Column(name = "votes")
     private int votes;
 

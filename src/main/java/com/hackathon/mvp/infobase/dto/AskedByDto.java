@@ -10,5 +10,5 @@ import lombok.Setter;
 public class AskedByDto {
     private Long id;
     private String name;
-    private String avatar;
+    private String email;
 }
