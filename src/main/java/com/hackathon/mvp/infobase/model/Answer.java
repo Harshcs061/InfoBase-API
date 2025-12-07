@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "answers")
@@ -14,9 +13,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Answer  {
+public class Answer {
     @Id
-    @Column(columnDefinition = "uuid")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,18 +31,35 @@ public class Answer  {
 
     private LocalDateTime createdAt;
 
-    @Column(columnDefinition = "votes")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "votes")
     private int votes;
 
-    @Column(columnDefinition = "upvote")
+    @Column(name = "upvote")
     private int upvote;
 
-    @Column(columnDefinition = "downvote")
+    @Column(name = "downvote")
     private int downvote;
+
+    @Column(name = "is_accepted")
+    private boolean isAccepted;
+
+    @Column(name = "is_edited")
+    private boolean isEdited;
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        isAccepted = false;
+        isEdited = false;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+        isEdited = true;
     }
 
     public String getContent() {
