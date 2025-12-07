@@ -1,9 +1,6 @@
 package com.hackathon.mvp.infobase.service;
 
-import com.hackathon.mvp.infobase.dto.CreateQuestionRequestDto;
-import com.hackathon.mvp.infobase.dto.CreateQuestionResponseDto;
-import com.hackathon.mvp.infobase.dto.QuestionDetailDto;
-import com.hackathon.mvp.infobase.dto.QuestionListResponseDto;
+import com.hackathon.mvp.infobase.dto.*;
 import org.springframework.stereotype.Service;
 
 
@@ -15,4 +12,6 @@ public interface QuestionService {
     QuestionDetailDto getQuestionById(Long id);
 
     CreateQuestionResponseDto createQuestion(CreateQuestionRequestDto request) throws IllegalArgumentException;
+
+    QuestionDetailDto updateQuestion(UpdateQuestionRequestDto request);
 }

@@ -29,42 +29,36 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // enable CORS for Spring Security (uses corsConfigurationSource bean below)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
+
+                // ⬇️ MUST HAVE for H2 Console
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll() // allow H2
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                // ensure CORS processing happens before the JWT filter
+
+                // ensure JWT filter runs before username-password filter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    /**
-     * CORS configuration used by Spring Security.
-     * - allowedOriginPatterns("*") lets localhost:3000, 4200 etc through (works with Spring 5.3+)
-     * - allowCredentials(true) allows cookies / Authorization header to be sent by browser
-     *
-     * IMPORTANT: In production prefer a whitelist and not "*".
-     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Use allowedOriginPatterns to allow dynamic origins (including localhost ports)
         config.setAllowedOriginPatterns(List.of("*"));
-
-        // If you want cookie/session authentication from browser set this true. Remove if not needed.
         config.setAllowCredentials(true);
-
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));           // allow all headers
-        config.setExposedHeaders(List.of("Authorization", "Link")); // headers browser can read
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization", "Link"));
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
